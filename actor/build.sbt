@@ -1,6 +1,6 @@
 name := "blueeyes-actor"
 
-version := "0.6.0-SNAPSHOT"
+version := "0.6.0-UNTYPED"
 
 organization := "com.reportgrid"
 
