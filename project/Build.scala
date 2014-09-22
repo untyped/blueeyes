@@ -15,8 +15,8 @@ object BlueEyesBuild extends Build {
       "Guiceyfruit Googlecode"            at "http://guiceyfruit.googlecode.com/svn/repo/releases/"
     ),
 
-    credentials += Credentials(Path.userHome / ".ivy2" / ".rgcredentials"),
-    publishMavenStyle := true,
+    // credentials += Credentials(Path.userHome / ".ivy2" / ".rgcredentials"),
+    publishMavenStyle := false,
     publishArtifact in Test := false,
     pomIncludeRepository := { (repo: MavenRepository) => false },
 
@@ -53,17 +53,16 @@ object BlueEyesBuild extends Build {
         </developer>
       </developers>,
 
-    publishTo <<= version { v: String =>
-      val nexus = "https://oss.sonatype.org/"
-      if (v.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
+    publishTo := (for {
+      host    <- Option(System.getenv("DEFAULT_IVY_REPO_HOST"))
+      path    <- Option(System.getenv("DEFAULT_IVY_REPO_PATH"))
+      user    <- Option(System.getenv("DEFAULT_IVY_REPO_USER"))
+      keyfile <- Option(System.getenv("DEFAULT_IVY_REPO_KEYFILE"))
+    } yield Resolver.sftp("UntypedPublish", host, path)(Resolver.ivyStylePatterns).as(user, file(keyfile))),
 
     crossScalaVersions := Seq("2.9.1", "2.9.2"),
 
-    version := "0.6.1-SNAPSHOT",
+    version := "0.6.1-UNTYPED",
 
     organization := "com.github.jdegoes",
 
